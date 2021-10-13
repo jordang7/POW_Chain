@@ -1,0 +1,16 @@
+{
+  "name": "pow-chain",
+  "version": "1.0.0",
+  "description": "pow chain Chainshot tut",
+  "main": "index.js",
+  "dependencies": {
+    "crypto-js": "^4.1.1",
+    "jayson": "^3.6.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jordan Greenberg",
+  "license": "ISC"
+}
