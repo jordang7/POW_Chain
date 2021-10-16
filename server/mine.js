@@ -6,8 +6,8 @@ const {PRIVATE_KEY,PUBLIC_KEY} = require('./config.js')
 const db = require('./db');
 const BLOCK_REWARD = 10;
 
-let mining = true;
-mine();
+let mining = false;
+// mine();
 
 function startMining(){
     mining=true;
