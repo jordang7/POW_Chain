@@ -40,7 +40,7 @@ function mine(public_key) {
     ? db.blockchain.blocks[db.blockchain.blocks.length - 1]
     : null;
 
-  if (prevBlock !== null && prevBlock.timestamp + 500 > block.timestamp) {
+  if (prevBlock !== null && prevBlock.timestamp + 1000 > Date.now()) {
     TARGET_DIFFICULTY += 1;
   } else if (
     prevBlock !== null &&
