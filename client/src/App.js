@@ -8,15 +8,41 @@ import {
   Link
 } from "react-router-dom";
 import HomePage from "./components/HomePage"
+import GetBalance from "./components/GetBalance"
+
+import Navbar from 'react-bootstrap/Navbar'
+import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav'
+
 function App() {
   return (
-      <Router>
-        <Switch>
-          <Route path="/">
-            <HomePage />
-          </Route>
-        </Switch>
-    </Router>
+
+    <div>
+       <Router>
+        <Navbar bg="light" expand="lg">
+          <Container>
+            <Navbar.Brand href="/Home">POW-Blockchain</Navbar.Brand>
+            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar.Collapse id="basic-navbar-nav">
+              <Nav className="me-auto">
+                <Nav.Link href="/Home">Home</Nav.Link>
+                <Nav.Link href="/getBalance">Lookup Balance</Nav.Link>
+              </Nav>
+            </Navbar.Collapse>
+          </Container>
+        </Navbar>
+
+
+          <Switch>
+            <Route path="/Home">
+              <HomePage />
+            </Route>
+            <Route path="/getBalance">
+              <GetBalance />
+            </Route>
+          </Switch>
+      </Router>
+    </div>
   );
 }
 

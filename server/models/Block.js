@@ -4,8 +4,10 @@ class Block{
     constructor(){
         this.timestamp = Date.now();
         this.nonce = 0;
-        this.transactions=[]
+        this.transactions=[],
+        this.difficulty =0
     }
+
     addTransaction(tx){
         this.transactions.push(tx)
     }

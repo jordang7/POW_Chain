@@ -1,46 +1,67 @@
-const Transaction = require('./models/Transaction')
-const UTXO = require('./models/UTXO')
-const Block = require('./models/Block')
-const TARGET_DIFFICULTY = BigInt("0x0" + "F".repeat(63));
-const {PRIVATE_KEY,PUBLIC_KEY} = require('./config.js')
-const db = require('./db');
+const Transaction = require("./models/Transaction");
+const UTXO = require("./models/UTXO");
+const Block = require("./models/Block");
+var TARGET_DIFFICULTY = 3;
+const db = require("./db");
 const BLOCK_REWARD = 10;
 
 let mining = false;
-// mine();
 
-function startMining(){
-    mining=true;
-    mine();
+function calculateDifficulty(difficulty) {
+  return BigInt("0x" + "0".repeat(difficulty) + "F".repeat(64 - difficulty));
 }
 
-function stopMining(){
-    mining= false;
+function startMining(public_key) {
+  mining = true;
+  mine(public_key);
 }
 
-function mine(){
-    if(!mining){
-        return;
-    }
-
-    const block = new Block()
-
-    const COINBASE_UTXO = new UTXO(PUBLIC_KEY, BLOCK_REWARD)
-    const COINBASE_TX = new Transaction([],[COINBASE_UTXO])
-    block.addTransaction(COINBASE_TX)
-
-    while(BigInt('0x0' + block.hash()) >= TARGET_DIFFICULTY){
-        block.nonce++;
-    }
-
-    block.execute()
-
-    db.blockchain.addBlock(block);
-    console.log(`Just mined block ${db.blockchain.blockHeight()} with a has of ${block.hash()} and a nonce of ${block.nonce}`)
-    setTimeout(mine, 5000);
+function stopMining() {
+  mining = false;
 }
 
-module.exports= {
-    startMining,
-    stopMining
+function mine(public_key) {
+  if (!mining) {
+    return;
+  }
+
+  const block = new Block();
+
+  const COINBASE_UTXO = new UTXO(public_key, BLOCK_REWARD);
+  const COINBASE_TX = new Transaction([], [COINBASE_UTXO]);
+  block.addTransaction(COINBASE_TX);
+
+  while (
+    BigInt("0x0" + block.hash()) >= calculateDifficulty(TARGET_DIFFICULTY)
+  ) {
+    block.nonce++;
+  }
+  const prevBlock = db.blockchain.blocks[db.blockchain.blocks.length - 1]
+    ? db.blockchain.blocks[db.blockchain.blocks.length - 1]
+    : null;
+
+  if (prevBlock !== null && prevBlock.timestamp + 500 > block.timestamp) {
+    TARGET_DIFFICULTY += 1;
+  } else if (
+    prevBlock !== null &&
+    prevBlock.timestamp + 600 < block.timestamp
+  ) {
+    TARGET_DIFFICULTY -= 1;
+  }
+
+  block.execute();
+
+  db.blockchain.addBlock(block);
+
+  console.log(
+    `Just mined block ${db.blockchain.blockHeight()} with a hash of ${block.hash()} and a nonce of ${
+      block.nonce
+    } with a difficulty of ${TARGET_DIFFICULTY}`
+  );
+  setTimeout(mine, 1);
 }
+
+module.exports = {
+  startMining,
+  stopMining,
+};

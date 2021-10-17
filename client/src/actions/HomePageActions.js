@@ -1,9 +1,12 @@
 import axios from "axios";
 let ENDPOINT_BASE = "http://localhost:8000/";
-export const startMining = () => {
+export const startMining = (address) => {
   axios({
     method: "POST",
     url: ENDPOINT_BASE + "startMining",
+    data: {
+      address:address
+    },
   }).then((response) => {
     console.log(response);
   });
@@ -18,7 +21,7 @@ export const stopMining = () => {
   });
 };
 
-export const getBalance = (address) => {
+export const lookUpBalance = (address) => {
   axios({
     method: "POST",
     url: ENDPOINT_BASE + "getBalance",

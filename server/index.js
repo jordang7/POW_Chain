@@ -4,7 +4,8 @@ const port = 8000
 
 const {startMining, stopMining} = require('./mine');
 const {UTXOS} = require('./db')
-const {PUBLIC_KEY} = require('./config')
+var EC = require('elliptic').ec;
+var ec = new EC('secp256k1');
 var cors = require("cors");
 app.use(cors());
 app.use(express.json());
@@ -15,7 +16,8 @@ app.get('/', (req, res) => {
 })
 
 app.post('/startMining',(req,res) =>{
-    startMining();
+    let public_key = req.body.address
+    startMining(public_key);
     res.send("Successfully started mining")
 })
 
@@ -33,6 +35,54 @@ app.post('/getBalance', async (req, res) => {
   //console.log(sum)
   res.send(sum.toString())
 })
+
+let accounts ={};
+
+let count =0
+while (count < 3){
+    const key = ec.genKeyPair();
+    const publicKey = key.getPublic().encode('hex');
+    const privateKey = key.getPrivate().toString(16)
+    accounts[count] = {
+      "publicKey": publicKey,
+      "privateKey": privateKey,
+      "balance" : 0
+    }
+    count++
+}
+
+console.log("Available Accounts")
+console.log("===================")
+for (let i in accounts){
+  console.log(`(${i}) `+  accounts[i].publicKey)
+}
+console.log("Private Keys")
+console.log("===================")
+for (let i in accounts){
+  console.log(`(${i}) ` + accounts[i].privateKey + ` (${accounts[i].balance})`)
+}
+app.get('/balance/:address', (req, res) => {
+  const {address} = req.params;
+  const balance = balances[address] || 0;
+  res.send({ balance });
+});
+
+app.post('/send', (req, res) => {
+  const {sender, amount, recipient,signature, msgHash} = req.body;
+  try{
+    const key = ec.keyFromPublic(sender,'hex');
+    if(key.verify(msgHash, signature)){
+      balances[sender] -= amount;
+      balances[recipient] = (balances[recipient] || 0) + +amount;
+      res.send({ balance: balances[sender] });
+    } else{
+      res.send({error: "Incorrect Private Key!"})
+    }
+  } catch(e){
+    res.send({error: "Invalid address"})
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`Listening at http://localhost:${port}`)
