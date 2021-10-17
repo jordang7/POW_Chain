@@ -1,24 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
-import HomePage from "./components/HomePage"
-import GetBalance from "./components/GetBalance"
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import HomePage from "./components/HomePage";
+import GetBalance from "./components/GetBalance";
+import MakeTransactions from "./components/MakeTransactions";
 
-import Navbar from 'react-bootstrap/Navbar'
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav'
+import Navbar from "react-bootstrap/Navbar";
+import Container from "react-bootstrap/Container";
+import Nav from "react-bootstrap/Nav";
 
 function App() {
   return (
-
     <div>
-       <Router>
+      <Router>
         <Navbar bg="light" expand="lg">
           <Container>
             <Navbar.Brand href="/Home">POW-Blockchain</Navbar.Brand>
@@ -27,20 +22,23 @@ function App() {
               <Nav className="me-auto">
                 <Nav.Link href="/Home">Home</Nav.Link>
                 <Nav.Link href="/getBalance">Lookup Balance</Nav.Link>
+                <Nav.Link href="/Transactions">Transactions</Nav.Link>
               </Nav>
             </Navbar.Collapse>
           </Container>
         </Navbar>
 
-
-          <Switch>
-            <Route path="/Home">
-              <HomePage />
-            </Route>
-            <Route path="/getBalance">
-              <GetBalance />
-            </Route>
-          </Switch>
+        <Switch>
+          <Route path="/Home">
+            <HomePage />
+          </Route>
+          <Route path="/getBalance">
+            <GetBalance />
+          </Route>
+          <Route path="/Transactions">
+            <MakeTransactions />
+          </Route>
+        </Switch>
       </Router>
     </div>
   );

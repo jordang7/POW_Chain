@@ -17,8 +17,6 @@ class HomePage extends React.Component {
       address: "",
       isMining: false,
     };
-    // startMining = startMining.bind(this);
-    // stopMining = stopMining.bind(this);
   }
   onFormSubmit = () => {
     this.setState({ isMining: true });
