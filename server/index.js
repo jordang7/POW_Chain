@@ -8,6 +8,10 @@ var EC = require("elliptic").ec;
 var ec = new EC("secp256k1");
 var cors = require("cors");
 const Transaction = require("./models/Transaction");
+const UTXO = require("./models/UTXO");
+const Block = require("./models/Block");
+const db = require("./db");
+
 app.use(cors());
 app.use(express.json());
 
@@ -63,28 +67,40 @@ for (let i in accounts) {
 }
 
 app.post("/sendTransaction", (req, res) => {
-  const { sender, amount, recipient, signature, msgHash } = req.body;
+  const { sender, sendAmt, recipientAdd, signature, msgHash } = req.body;
   try {
     const key = ec.keyFromPublic(sender, "hex");
     if (key.verify(msgHash, signature)) {
-      for (let i in accounts) {
-        const NEW_UTXO_IN = new UTXO(sender, amount);
-        const NEW_UTXO_OUT = new UTXO(recipient, amount);
-        const NEW_TX = new Transaction([NEW_UTXO_IN], [NEW_UTXO_OUT]);
-        block.addTransaction(NEW_TX);
+      let UTXO_IN_ARR = [];
+      let UTXO_OUT_ARR = [];
+      let runningValue = sendAmt;
+      const block = new Block();
+      const ourUTXOs = UTXOS.filter((x) => x.owner === sender && !x.spent);
 
-        if (accounts[i].publicKey == sender) {
-          accounts[i].balance -= amount;
-        } else if (accounts[i].publicKey === recipient) {
-          (accounts[i] || 0) + amount;
+      // TODO only works for exact UTXO amounts or smaller amounts
+      // Want to create logic if UTXO is larger than amount sent
+      ourUTXOs.forEach((utxo) => {
+        if (utxo.amount <= runningValue) {
+          UTXO_IN_ARR.push(new UTXO(sender, utxo.amount));
+          UTXO_OUT_ARR.push(new UTXO(recipientAdd, utxo.amount));
+          runningValue -= utxo.amount;
         }
+      });
+      if (runningValue > 0) {
+        res.send({ error: "Insufficient Funds" });
+      } else {
+        const NEW_TX = new Transaction(UTXO_IN_ARR, UTXO_OUT_ARR);
+        block.addTransaction(NEW_TX);
       }
-      balances[recipient] = (balances[recipient] || 0) + amount;
-      res.send({ balance: balances[sender] });
+      block.execute();
+      db.blockchain.addBlock(block);
+
+      res.send("Transaction successful");
     } else {
       res.send({ error: "Incorrect Private Key!" });
     }
   } catch (e) {
+    console.log(e);
     res.send({ error: "Invalid address" });
   }
 });

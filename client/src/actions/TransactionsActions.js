@@ -24,8 +24,8 @@ export const sendTransaction = (sender, sendAmt, recipientAdd, privateKey) => {
       msgHash: msgHash,
     },
   }).then((response) => {
-    console.log(response.data.error);
-    if (response.data.error.length) {
+    console.log(response);
+    if (response.data.error?.length) {
       alert(response.data.error);
     } else {
       alert(

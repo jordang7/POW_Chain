@@ -4,7 +4,7 @@ const Block = require("./models/Block");
 var TARGET_DIFFICULTY = 3;
 const db = require("./db");
 const BLOCK_REWARD = 10;
-
+var PUBLIC_KEY;
 let mining = false;
 
 function calculateDifficulty(difficulty) {
@@ -24,10 +24,12 @@ function mine(public_key) {
   if (!mining) {
     return;
   }
-
+  if (public_key) {
+    PUBLIC_KEY = public_key;
+  }
   const block = new Block();
 
-  const COINBASE_UTXO = new UTXO(public_key, BLOCK_REWARD);
+  const COINBASE_UTXO = new UTXO(PUBLIC_KEY, BLOCK_REWARD);
   const COINBASE_TX = new Transaction([], [COINBASE_UTXO]);
   block.addTransaction(COINBASE_TX);
 
@@ -58,7 +60,7 @@ function mine(public_key) {
       block.nonce
     } with a difficulty of ${TARGET_DIFFICULTY}`
   );
-  setTimeout(mine(public_key), 10);
+  setTimeout(mine, 10);
 }
 
 module.exports = {

@@ -26,7 +26,7 @@ class MakeTransactions extends React.Component {
   render() {
     return (
       <div>
-        <h4 class="text-center">Your Address</h4>
+        <h4 class="text-center">Please fill in your Transaction Information</h4>
         <InputGroup className="mb-3">
           <InputGroup.Text id="basic-addon1">0x</InputGroup.Text>
           <FormControl
@@ -37,9 +37,6 @@ class MakeTransactions extends React.Component {
           />
         </InputGroup>
         <Form>
-          <h4 class="text-center">
-            Input the address you would like to start mining with
-          </h4>
           <InputGroup className="mb-3">
             <InputGroup.Text id="basic-addon1">$</InputGroup.Text>
             <FormControl
