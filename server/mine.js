@@ -58,7 +58,7 @@ function mine(public_key) {
       block.nonce
     } with a difficulty of ${TARGET_DIFFICULTY}`
   );
-  setTimeout(mine, 1);
+  setTimeout(mine(public_key), 10);
 }
 
 module.exports = {

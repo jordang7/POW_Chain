@@ -7,6 +7,7 @@ const { UTXOS } = require("./db");
 var EC = require("elliptic").ec;
 var ec = new EC("secp256k1");
 var cors = require("cors");
+const Transaction = require("./models/Transaction");
 app.use(cors());
 app.use(express.json());
 
@@ -60,17 +61,18 @@ console.log("===================");
 for (let i in accounts) {
   console.log(`(${i}) ` + accounts[i].privateKey + ` (${accounts[i].balance})`);
 }
-app.get("/balance/:address", (req, res) => {
-  const { address } = req.params;
-  const balance = balances[address] || 0;
-  res.send({ balance });
-});
+
 app.post("/sendTransaction", (req, res) => {
   const { sender, amount, recipient, signature, msgHash } = req.body;
   try {
     const key = ec.keyFromPublic(sender, "hex");
     if (key.verify(msgHash, signature)) {
       for (let i in accounts) {
+        const NEW_UTXO_IN = new UTXO(sender, amount);
+        const NEW_UTXO_OUT = new UTXO(recipient, amount);
+        const NEW_TX = new Transaction([NEW_UTXO_IN], [NEW_UTXO_OUT]);
+        block.addTransaction(NEW_TX);
+
         if (accounts[i].publicKey == sender) {
           accounts[i].balance -= amount;
         } else if (accounts[i].publicKey === recipient) {
