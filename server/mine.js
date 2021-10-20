@@ -22,6 +22,7 @@ function stopMining() {
 
 function mine(public_key) {
   if (!mining) {
+    console.log("Stopped Mining!");
     return;
   }
   if (public_key) {
@@ -42,11 +43,11 @@ function mine(public_key) {
     ? db.blockchain.blocks[db.blockchain.blocks.length - 1]
     : null;
 
-  if (prevBlock !== null && prevBlock.timestamp + 1000 > Date.now()) {
+  if (prevBlock !== null && prevBlock.timestamp + 6000 > Date.now()) {
     TARGET_DIFFICULTY += 1;
   } else if (
     prevBlock !== null &&
-    prevBlock.timestamp + 600 < block.timestamp
+    prevBlock.timestamp + 7000 < block.timestamp
   ) {
     TARGET_DIFFICULTY -= 1;
   }
@@ -60,7 +61,7 @@ function mine(public_key) {
       block.nonce
     } with a difficulty of ${TARGET_DIFFICULTY}`
   );
-  setTimeout(mine, 10);
+  setTimeout(mine, 5000);
 }
 
 module.exports = {
