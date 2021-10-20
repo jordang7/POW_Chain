@@ -84,18 +84,30 @@ app.post("/sendTransaction", (req, res) => {
           UTXO_IN_ARR.push(new UTXO(sender, utxo.amount));
           UTXO_OUT_ARR.push(new UTXO(recipientAdd, utxo.amount));
           runningValue -= utxo.amount;
+        } else {
+          UTXO_IN_ARR.push(new UTXO(sender, utxo.amount));
+          UTXO_OUT_ARR.push(new UTXO(recipientAdd, runningValue));
+          UTXO_OUT_ARR.push(new UTXO(sender, utxo.amount - runningValue));
+          runningValue = 0;
         }
       });
+
       if (runningValue > 0) {
         res.send({ error: "Insufficient Funds" });
+        return;
       } else {
         const NEW_TX = new Transaction(UTXO_IN_ARR, UTXO_OUT_ARR);
         block.addTransaction(NEW_TX);
       }
       block.execute();
       db.blockchain.addBlock(block);
-
-      res.send("Transaction successful");
+      const sum = UTXOS.filter((x) => x.owner === sender && !x.spent).reduce(
+        (p, c) => p + c.amount,
+        0
+      );
+      //console.log(sum)
+      res.send(sum.toString());
+      return;
     } else {
       res.send({ error: "Incorrect Private Key!" });
     }

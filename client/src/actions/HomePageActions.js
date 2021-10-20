@@ -5,7 +5,7 @@ export const startMining = (address) => {
     method: "POST",
     url: ENDPOINT_BASE + "startMining",
     data: {
-      address:address
+      address: address,
     },
   }).then((response) => {
     console.log(response);
@@ -26,9 +26,9 @@ export const lookUpBalance = (address) => {
     method: "POST",
     url: ENDPOINT_BASE + "getBalance",
     data: {
-        address:address
-      },
+      address: address,
+    },
   }).then((response) => {
-        alert("Your balance is: " + response.data)
+    alert("Your balance is: " + response.data);
   });
 };

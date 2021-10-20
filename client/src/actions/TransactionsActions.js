@@ -24,13 +24,13 @@ export const sendTransaction = (sender, sendAmt, recipientAdd, privateKey) => {
       msgHash: msgHash,
     },
   }).then((response) => {
-    console.log(response);
-    if (response.data.error?.length) {
+    if (response.data.error) {
       alert(response.data.error);
     } else {
+      console.log(response.data);
       alert(
-        "Your transaction has successfully sent, your current balance is now: ",
-        response.balance
+        "Your transaction has successfully sent, your current balance is now: " +
+          response.data
       );
     }
   });
