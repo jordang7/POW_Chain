@@ -3,4 +3,4 @@
 Simple POW blockchain implementation
 -One Miner, transactions, UTXOs, address balances
 
-On npm start, 3 public/private key pairs are created with a set amount of eth. These were used in testing the transactions/UTXO. Any public/private key pair can be used for mining
+On server start, 3 public/private key pairs are generated with a set amount of eth and logged to the console. These were used in testing the transactions/UTXO. Any public/private key pair can be used for mining
